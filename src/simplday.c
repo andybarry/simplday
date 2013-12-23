@@ -15,12 +15,13 @@
 #include "pebble.h"
 
 
-#define MOVE_AMOUNT (-30)
+#define MOVE_AMOUNT (-10)
 
 Window *window;
 TextLayer *text_day_layer;
 TextLayer *text_date_layer;
 TextLayer *text_time_layer;
+TextLayer *text_sun_layer;
 Layer *line_layer;
 GFont *font_date;
 GFont *font_time;
@@ -46,9 +47,12 @@ void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed)
     static char date_text[] = "Xxxxxxxxx 00";
     static char day_text[] = "Xxxxxxxxx";
     static char time_text[] = "00:00";
+    static char sun_text[] = "00:00";
+    
     char *time_format;
+    char *sun_format;
 
-    if (units_changed & DAY_UNIT)
+    if (units_changed & DAY_UNIT) // update day text if day has changed
     {
         strftime(day_text, sizeof(day_text), "%A", tick_time);
         text_layer_set_text(text_day_layer, day_text);
@@ -59,6 +63,9 @@ void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed)
 
     time_format = clock_is_24h_style() ? "%R" : "%I:%M";
     strftime(time_text, sizeof(time_text), time_format, tick_time);
+    
+    // update text for time until sunset
+    strftime(sun_text, sizeof(time_text), time_format, tick_time);
 
     // Kludge to handle lack of non-padded hour format string
     // for twelve hour clock.
@@ -68,6 +75,10 @@ void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed)
     }
 
     text_layer_set_text(text_time_layer, time_text);
+    
+    
+    // put sun text on the screen
+    text_layer_set_text(text_sun_layer, "+00:00");
 }
 
 
@@ -91,24 +102,30 @@ void app_init(void)
     font_date = fonts_load_custom_font(res_d);
     font_time = fonts_load_custom_font(res_t);
 
-    text_day_layer = text_layer_create(GRect(8, 44 + MOVE_AMOUNT, 144-8, 168-44));
+    text_day_layer = text_layer_create(GRect(8, 44 + MOVE_AMOUNT, 144-8, 168-44- MOVE_AMOUNT));
     text_layer_set_text_color(text_day_layer, GColorWhite);
     text_layer_set_background_color(text_day_layer, GColorClear);
     text_layer_set_font(text_day_layer, font_date);
     layer_add_child(window_layer, text_layer_get_layer(text_day_layer));
 
-    text_date_layer = text_layer_create(GRect(8, 68 + MOVE_AMOUNT, 144-8, 168-68));
+    text_date_layer = text_layer_create(GRect(8, 68 + MOVE_AMOUNT, 144-8, 168-68- MOVE_AMOUNT));
     text_layer_set_text_color(text_date_layer, GColorWhite);
     text_layer_set_background_color(text_date_layer, GColorClear);
     text_layer_set_font(text_date_layer, font_date);
     layer_add_child(window_layer, text_layer_get_layer(text_date_layer));
 
-    text_time_layer = text_layer_create(GRect(7, 92 + MOVE_AMOUNT, 144-7, 168-92));
+    text_time_layer = text_layer_create(GRect(7, 92 + MOVE_AMOUNT, 144-7, 168-92- MOVE_AMOUNT));
     text_layer_set_text_color(text_time_layer, GColorWhite);
     text_layer_set_background_color(text_time_layer, GColorClear);
     text_layer_set_font(text_time_layer, font_time);
     layer_add_child(window_layer, text_layer_get_layer(text_time_layer));
-
+    
+    text_sun_layer = text_layer_create(GRect(75, 138, 144-45, 168-75));
+    text_layer_set_text_color(text_sun_layer, GColorWhite);
+    text_layer_set_background_color(text_sun_layer, GColorClear);
+    text_layer_set_font(text_sun_layer, font_date);
+    layer_add_child(window_layer, text_layer_get_layer(text_sun_layer));
+    
     line_layer = layer_create(GRect(0, 0, 144, 168));
     layer_set_update_proc(line_layer, line_layer_update_callback);
     layer_add_child(window_layer, line_layer);
@@ -127,6 +144,7 @@ void app_term(void)
     text_layer_destroy(text_time_layer);
     text_layer_destroy(text_date_layer);
     text_layer_destroy(text_day_layer);
+    text_layer_destroy(text_sun_layer);
     layer_destroy(line_layer);
 
     window_destroy(window);
