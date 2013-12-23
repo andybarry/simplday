@@ -5,6 +5,8 @@
 * @file   simplday.c
 *
 * @author Bob Hauck <bobh@haucks.org>
+* @author Modified by Andrew Barry <abarry@gmail.com> to display
+*   time until sunrise / sunset
 *
 * This code may be used or modified in any way whatsoever without permission
 * from the author.
@@ -12,6 +14,8 @@
 *****************************************************************************/
 #include "pebble.h"
 
+
+#define MOVE_AMOUNT (-30)
 
 Window *window;
 TextLayer *text_day_layer;
@@ -29,8 +33,8 @@ void line_layer_update_callback(Layer *l, GContext *ctx)
     (void)l;
 
     graphics_context_set_stroke_color(ctx, GColorWhite);
-    graphics_draw_line(ctx, GPoint(8, 97), GPoint(131, 97));
-    graphics_draw_line(ctx, GPoint(8, 98), GPoint(131, 98));
+    graphics_draw_line(ctx, GPoint(8, 97 + MOVE_AMOUNT), GPoint(131, 97 + MOVE_AMOUNT));
+    graphics_draw_line(ctx, GPoint(8, 98 + MOVE_AMOUNT), GPoint(131, 98 + MOVE_AMOUNT));
 }
 
 
@@ -87,19 +91,19 @@ void app_init(void)
     font_date = fonts_load_custom_font(res_d);
     font_time = fonts_load_custom_font(res_t);
 
-    text_day_layer = text_layer_create(GRect(8, 44, 144-8, 168-44));
+    text_day_layer = text_layer_create(GRect(8, 44 + MOVE_AMOUNT, 144-8, 168-44));
     text_layer_set_text_color(text_day_layer, GColorWhite);
     text_layer_set_background_color(text_day_layer, GColorClear);
     text_layer_set_font(text_day_layer, font_date);
     layer_add_child(window_layer, text_layer_get_layer(text_day_layer));
 
-    text_date_layer = text_layer_create(GRect(8, 68, 144-8, 168-68));
+    text_date_layer = text_layer_create(GRect(8, 68 + MOVE_AMOUNT, 144-8, 168-68));
     text_layer_set_text_color(text_date_layer, GColorWhite);
     text_layer_set_background_color(text_date_layer, GColorClear);
     text_layer_set_font(text_date_layer, font_date);
     layer_add_child(window_layer, text_layer_get_layer(text_date_layer));
 
-    text_time_layer = text_layer_create(GRect(7, 92, 144-7, 168-92));
+    text_time_layer = text_layer_create(GRect(7, 92 + MOVE_AMOUNT, 144-7, 168-92));
     text_layer_set_text_color(text_time_layer, GColorWhite);
     text_layer_set_background_color(text_time_layer, GColorClear);
     text_layer_set_font(text_time_layer, font_time);
