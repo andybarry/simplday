@@ -72,6 +72,10 @@ void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed)
     if (!clock_is_24h_style() && (time_text[0] == '0'))
     {
         memmove(time_text, &time_text[1], sizeof(time_text) - 1);
+        
+        // ask the phone for new sunrise sunset times
+        // TODO
+        
     }
 
     text_layer_set_text(text_time_layer, time_text);
