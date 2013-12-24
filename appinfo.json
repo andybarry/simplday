@@ -8,7 +8,10 @@
   "watchapp": {
     "watchface": true
   },
-  "appKeys": {},
+  "appKeys": {
+    "sunrise_time": 0,
+    "sunset_time": 1
+  },
   "resources": {
     "media": [
       {
