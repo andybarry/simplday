@@ -1,10 +1,10 @@
 {
-  "uuid": "b192c2ce-b21d-479e-9ce2-090adc6061ef",
-  "shortName": "SimplDay",
-  "longName": "SimplDay",
-  "companyName": "Bob Hauck <bobh@haucks.org>",
-  "versionCode": 2,
-  "versionLabel": "2.0.0",
+  "uuid": "5eaf2ec1-a627-49b5-be15-839806dfa1ea",
+  "shortName": "Simple+Sun",
+  "longName": "Simple Day with Sunrise and Sunset",
+  "companyName": "Andrew + Dan Barry",
+  "versionCode": 1,
+  "versionLabel": "1.0.1",
   "watchapp": {
     "watchface": true
   },

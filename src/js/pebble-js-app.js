@@ -2,6 +2,8 @@
  (c) 2011-2013, Vladimir Agafonkin
  SunCalc is a JavaScript library for calculating sun/mooon position and light phases.
  https://github.com/mourner/suncalc
+ * 
+ * Modified slightly for simple day with sun pebble app.
 */
 
 ready = false;

@@ -1,6 +1,7 @@
 /****************************************************************************/
 /**
-* Pebble watch face that displays day, month, date, and time.
+* Pebble watch face that displays day, month, date, and time.  Modified for
+* display of sunrise/set times as well.
 *
 * @file   simplday.c
 *
@@ -106,7 +107,7 @@ void update_sun_time(struct tm *tick_time) {
         if (delta_display > 0) {
             plus_minus = '+';
         } else {
-            plus_minus = '-';
+            plus_minus = ' ';
             delta_display = -delta_display;
         }
         
@@ -176,8 +177,6 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
 
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
     
-  static char sun_text[] = "00:00";
-  
   APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Key: %u", (unsigned int) key);
     
   time_t t = time(NULL);
@@ -200,7 +199,6 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 
     case SUNSET_TIME_KEY:
       APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync value: %d", (int) new_tuple->value->int32);
-      snprintf(sun_text, sizeof(sun_text), "xx:%d", (int)new_tuple->value->int32);
       
       // store the time
       sunset_time = (int)new_tuple->value->int32;
@@ -266,7 +264,7 @@ void app_init(void)
     text_layer_set_font(text_time_layer, font_time);
     layer_add_child(window_layer, text_layer_get_layer(text_time_layer));
     
-    text_sun_layer = text_layer_create(GRect(75, 138, 144-45, 168-75));
+    text_sun_layer = text_layer_create(GRect(80, 138, 144-45, 168-80));
     text_layer_set_text_color(text_sun_layer, GColorWhite);
     text_layer_set_background_color(text_sun_layer, GColorClear);
     text_layer_set_font(text_sun_layer, font_date);
