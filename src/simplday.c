@@ -18,6 +18,11 @@
 
 #define MOVE_AMOUNT (-15)
 
+#define SUNRISE_STORAGE_KEY 1
+#define SUNSET_STORAGE_KEY 2
+
+#define DEFAULT_SUN_TIME (-1)
+
 Window *window;
 TextLayer *text_day_layer;
 TextLayer *text_date_layer;
@@ -191,6 +196,8 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       sunrise_time = (int)new_tuple->value->int32;
       APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync value: %d", (int) new_tuple->value->int32);
       
+      // update persistent storage for sunrise
+      persist_write_int(SUNRISE_STORAGE_KEY, sunrise_time);
       
       
       update_sun_time(tick_time);
@@ -202,6 +209,9 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       
       // store the time
       sunset_time = (int)new_tuple->value->int32;
+      
+      // update persistent storage for sunset
+      persist_write_int(SUNSET_STORAGE_KEY, sunset_time);
       
       update_sun_time(tick_time);
       
@@ -220,14 +230,23 @@ void app_init(void)
     const int outbound_size = 64;
     app_message_open(inbound_size, outbound_size);
     
+    // restore values from persistent storage in case the phone isn't around
+    sunrise_time = persist_exists(SUNRISE_STORAGE_KEY) ? persist_read_int(SUNRISE_STORAGE_KEY) : DEFAULT_SUN_TIME;
+    
+    sunset_time = persist_exists(SUNSET_STORAGE_KEY) ? persist_read_int(SUNSET_STORAGE_KEY) : DEFAULT_SUN_TIME;
+    
     Tuplet initial_values[] = {
-        TupletInteger(SUNRISE_TIME_KEY, -1),
-        TupletInteger(SUNSET_TIME_KEY, -1),
+        TupletInteger(SUNRISE_TIME_KEY, sunrise_time),
+        TupletInteger(SUNSET_TIME_KEY, sunset_time),
     };
     
     app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values, ARRAY_LENGTH(initial_values),
       sync_tuple_changed_callback, sync_error_callback, NULL);
-      
+    
+    
+    
+    
+    // get sunrise/set times from the phone
     send_cmd();
     
     time_t t = time(NULL);
