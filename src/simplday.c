@@ -90,9 +90,9 @@ void update_sun_time(struct tm *tick_time) {
         
         // figure out which one to display: if we're within two hours, display
         // that one, otherwise, display the next event
-        if (delta_sunrise < 120) {
+        if (delta_sunrise < 210) {
             delta_display = delta_sunrise;
-        } else if (delta_sunset < 120) {
+        } else if (delta_sunset < 210) {
             delta_display = delta_sunset;
         } else if (delta_sunrise < 0) {
             // it's before sunrise, display sunrise

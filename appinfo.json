@@ -4,7 +4,7 @@
   "longName": "Simple Day with Sunrise and Sunset",
   "companyName": "Andrew + Dan Barry",
   "versionCode": 1,
-  "versionLabel": "1.0.1",
+  "versionLabel": "1.0.3",
   "watchapp": {
     "watchface": true
   },
